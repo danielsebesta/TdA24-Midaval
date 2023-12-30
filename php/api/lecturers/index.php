@@ -121,7 +121,7 @@ try {
 		$db->close();
 
 		http_response_code(200);
-		echo json_encode([$lecturer]);
+		echo json_encode($lecturer);
 		exit();
 		// Zpracování PUT požadavku při zadaném UUID
 	} elseif ($_SERVER["REQUEST_METHOD"] === "PUT" && isset($_GET["uuid"])) {
@@ -210,5 +210,5 @@ try {
 	$db->close();
 } catch (Exception $e) {
 	http_response_code(500);
-	echo json_encode(["error" => $e->getMessage()]);
+	echo json_encode(["error" => $e->getMessage()], JSON_FORCE_OBJECT);
 }
