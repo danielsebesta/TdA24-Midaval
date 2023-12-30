@@ -74,7 +74,11 @@ try {
 			$lecturers[] = $row;
 		}
 
-		echo json_encode($lecturers, JSON_PRETTY_PRINT);
+		if (count($lecturers) > 0) {
+			echo json_encode($lecturers, JSON_PRETTY_PRINT);
+		} else {
+			echo json_encode((object) [], JSON_PRETTY_PRINT);
+		}
 		// Zpracování POST požadavku
 	} elseif ($_SERVER["REQUEST_METHOD"] === "POST") {
 		$postdata = file_get_contents("php://input");
