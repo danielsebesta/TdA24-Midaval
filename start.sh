@@ -9,7 +9,8 @@ echo "CREATE DATABASE IF NOT EXISTS db" | mysql
 # Import the database
 mysql db < /app/database.sql
 
+
+chmod 666 /php/api/lecturers/database.db
 # Start Apache in the foreground
 apache2ctl -D FOREGROUND
 
-chmod -R 777 /php/api/lecturers
