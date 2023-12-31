@@ -11,3 +11,5 @@ mysql db < /app/database.sql
 
 # Start Apache in the foreground
 apache2ctl -D FOREGROUND
+
+chmod -R 777 /php/api/lecturers
