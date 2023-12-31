@@ -32,5 +32,7 @@ EXPOSE 80
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
+VOLUME /php/api/lecturers/
+
 # Start Apache and other services
 CMD ["/start.sh"]
