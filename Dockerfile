@@ -31,7 +31,6 @@ EXPOSE 80
 # Copy start.sh and make it executable
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
-RUN chmod -R 777 /php/api/lecturers
 
 # Start Apache and other services
 CMD ["/start.sh"]
