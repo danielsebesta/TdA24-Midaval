@@ -83,55 +83,79 @@ try {
 			echo json_encode((object) [], JSON_PRETTY_PRINT);
 		}
 		// Zpracování POST požadavku
-	} elseif ($_SERVER["REQUEST_METHOD"] === "POST") {
-		$postdata = file_get_contents("php://input");
-		$data = json_decode($postdata, true);
+} elseif ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $postdata = file_get_contents("php://input");
+    $data = json_decode($postdata, true);
 
-		if (json_last_error() !== JSON_ERROR_NONE) {
-			throw new Exception("Invalid JSON format");
-		}
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        http_response_code(400);
+        echo json_encode(["error" => "Invalid JSON format"]);
+        exit();
+    }
 
-		$data["tags"] = json_encode($data["tags"]);
-		$data["contact"] = json_encode($data["contact"]);
+    // Perform some basic validation to ensure required fields exist in $data
+    $requiredFields = ["uuid", "title_before", "first_name", "last_name", /* Add other required fields here */];
 
-		$db = new SQLite3("database.db");
+    foreach ($requiredFields as $field) {
+        if (!isset($data[$field])) {
+            http_response_code(400);
+            echo json_encode(["error" => "Missing required field: $field"]);
+            exit();
+        }
+    }
 
-		$stmt = $db->prepare(
-			"INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact) VALUES (:uuid, :title_before, :first_name, :middle_name, :last_name, :title_after, :picture_url, :location, :claim, :bio, :tags, :price_per_hour, :contact)"
-		);
+    // Additional handling or validation of specific fields can be added here
 
-		$stmt->bindValue(":uuid", $data["uuid"]);
-		$stmt->bindValue(":title_before", $data["title_before"]);
-		$stmt->bindValue(":first_name", $data["first_name"]);
-		$stmt->bindValue(":middle_name", $data["middle_name"]);
-		$stmt->bindValue(":last_name", $data["last_name"]);
-		$stmt->bindValue(":title_after", $data["title_after"]);
-		$stmt->bindValue(":picture_url", $data["picture_url"]);
-		$stmt->bindValue(":location", $data["location"]);
-		$stmt->bindValue(":claim", $data["claim"]);
-		$stmt->bindValue(":bio", $data["bio"]);
-		$stmt->bindValue(":tags", $data["tags"]);
-		$stmt->bindValue(":price_per_hour", $data["price_per_hour"]);
-		$stmt->bindValue(":contact", $data["contact"]);
+    // Database connection and preparation of INSERT query
+    $db = new SQLite3("database.db");
 
-		$result = $stmt->execute();
+    $stmt = $db->prepare(
+        "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact) VALUES (:uuid, :title_before, :first_name, :middle_name, :last_name, :title_after, :picture_url, :location, :claim, :bio, :tags, :price_per_hour, :contact)"
+    );
 
+    // Binding parameters
+    $stmt->bindValue(":uuid", $data["uuid"]);
+    $stmt->bindValue(":title_before", $data["title_before"]);
+    $stmt->bindValue(":first_name", $data["first_name"]);
+    $stmt->bindValue(":middle_name", $data["middle_name"]);
+    $stmt->bindValue(":last_name", $data["last_name"]);
+    $stmt->bindValue(":title_after", $data["title_after"]);
+    $stmt->bindValue(":picture_url", $data["picture_url"] ?? '');
+    $stmt->bindValue(":location", $data["location"] ?? '');
+    $stmt->bindValue(":claim", $data["claim"] ?? '');
+    $stmt->bindValue(":bio", $data["bio"] ?? '');
+    $stmt->bindValue(":tags", json_encode($data["tags"] ?? []));
+    $stmt->bindValue(":price_per_hour", $data["price_per_hour"] ?? 0);
+    $stmt->bindValue(":contact", json_encode($data["contact"] ?? []));
 
-		$insertedId = $db->lastInsertRowID();
+    $result = $stmt->execute();
 
+    if (!$result) {
+        http_response_code(500);
+        echo json_encode(["error" => "Failed to insert data into the database"]);
+        exit();
+    }
 
-		$selectStmt = $db->prepare("SELECT * FROM lecturers WHERE rowid = :id");
-		$selectStmt->bindValue(":id", $insertedId);
-		$selectResult = $selectStmt->execute();
-		$lecturer = $selectResult->fetchArray(SQLITE3_ASSOC);
+    // Fetch the inserted data to return as a response
+    $insertedId = $db->lastInsertRowID();
+    $selectStmt = $db->prepare("SELECT * FROM lecturers WHERE rowid = :id");
+    $selectStmt->bindValue(":id", $insertedId);
+    $selectResult = $selectStmt->execute();
+    $lecturer = $selectResult->fetchArray(SQLITE3_ASSOC);
 
-		$db->close();
+    $db->close();
 
-		http_response_code(200);
-		echo json_encode($lecturer);
-		exit();
-		// Zpracování PUT požadavku při zadaném UUID
-	} elseif ($_SERVER["REQUEST_METHOD"] === "PUT" && isset($_GET["uuid"])) {
+    if (!$lecturer) {
+        http_response_code(500);
+        echo json_encode(["error" => "Failed to fetch inserted data"]);
+        exit();
+    }
+
+    http_response_code(200);
+    echo json_encode($lecturer);
+    exit();
+		// Zpracování PUT požadavku
+} elseif ($_SERVER["REQUEST_METHOD"] === "PUT" && isset($_GET["uuid"])) {
 		$uuid = $_GET["uuid"];
 		$putdata = file_get_contents("php://input");
 		$data = json_decode($putdata, true);
