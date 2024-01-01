@@ -11,6 +11,9 @@ mysql db < /app/database.sql
 
 
 chmod 666 /php/api/lecturers/database.db
+chmod -R 664 /php/api/lecturers
+chown -R www-data:www-data /php/api/lecturers
+
 # Start Apache in the foreground
 apache2ctl -D FOREGROUND
 
