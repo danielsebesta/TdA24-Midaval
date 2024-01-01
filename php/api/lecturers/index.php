@@ -10,6 +10,9 @@ header("Content-Type: application/json; charset=utf-8");
 try {
 	// Připojení se na databázi
 	$db = new SQLite3("database.db");
+	    if (!$db) {
+        throw new Exception("Unable to open database for writing");
+    }
 
 	// Zpracování GET požadavku při zadaném UUID
 	if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["uuid"])) {
