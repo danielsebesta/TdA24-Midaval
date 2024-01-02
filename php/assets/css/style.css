@@ -1,0 +1,78 @@
+body {
+	font-family: 'Open Sans', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+	overflow-x: hidden;
+	color: #333333;
+}
+
+p {
+	color: rgb(40, 44, 46);
+}
+
+
+.badge {
+	background: #7ec6d2;
+	color: #00384D;
+}
+
+h1 {
+	font-family: 'Lalezar', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+}
+
+
+.wave-img {
+	background: url('./vlna.svg');
+	width: 100vw;
+	height: 500px;
+	background-position: bottom;
+	background-size: cover;
+	background-repeat: repeat-x;
+	margin: 0;
+}
+.wave-img2 {
+	transform: rotate(180deg);
+}
+
+.nav-link {
+	margin: 5px;
+	border-radius: 15rem;
+	transition: all .3s linear;
+}
+
+.nav-link:hover {
+	transition: all .3s linear;
+	background: #bee2e970;
+}
+
+.btn-primary {
+	background: #74C7D3;
+	border: #74C7D3;
+}
+
+.btn-primary:hover {
+	background: #57959f;
+}
+#loadingscreen {
+	height: 100vh;
+	width: 100vw;
+	background: rgb(255, 255, 255);
+	z-index:10000000000000000;
+	position: fixed;
+	display:flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.navbar2 {
+border-radius: 0 0 25px 25px;
+width: 100vw;
+backdrop-filter: blur(15px);
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.nav-itemy {
+	justify-content: space-evenly;
+		gap: 50vw;
+		display: flex;
+}
