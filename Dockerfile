@@ -8,6 +8,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Enable Apache mod_rewrite
+RUN docker-php-ext-install mysqli pdo_mysql
 RUN a2enmod rewrite
 
 COPY . /app
