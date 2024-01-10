@@ -3,7 +3,7 @@ FROM php:8.1-apache
 
 # Install system dependencies and MariaDB
 RUN apt-get update && \
-    apt-get install -y mariadb-server && \
+    apt-get install -y mariadb-server pwgen && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -11,16 +11,17 @@ RUN apt-get update && \
 RUN docker-php-ext-install mysqli pdo_mysql
 RUN a2enmod rewrite
 
-COPY . /app
+#COPY . /app
 
 # Copy the application code to the container
-COPY ./php /var/www/html
+#COPY ./php /var/www/html
+# copying php project files to image makes developing harder!!!
 
 # Update the Apache configuration to point to /var/www/html/www (where your index.php is)
 RUN echo '<VirtualHost *:80>\n\
-    DocumentRoot /var/www/html\n\
+    DocumentRoot /app/php\n\
     ServerName localhost\n\
-    <Directory /var/www/html>\n\
+    <Directory /app/php>\n\
         AllowOverride All\n\
         Require all granted\n\
     </Directory>\n\

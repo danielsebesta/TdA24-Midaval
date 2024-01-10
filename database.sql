@@ -1,11 +1,10 @@
 -- Vytvoření databáze
 CREATE DATABASE IF NOT EXISTS lecturerdb;
 
-CREATE USER 'databaze'@'localhost' IDENTIFIED BY '${{ secrets.DB_PASSWORD }}';
-GRANT ALL PRIVILEGES ON mydatabase.* TO 'databaze'@'localhost';
+GRANT ALL PRIVILEGES ON lecturerdb.* TO 'databaze'@'localhost';
 FLUSH PRIVILEGES;
 
-USE mydatabase;
+USE lecturerdb;
 
 CREATE TABLE IF NOT EXISTS lecturers (
     uuid TEXT NOT NULL,
