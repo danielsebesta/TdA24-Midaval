@@ -91,20 +91,22 @@ $jsonData = file_get_contents('php://input');
 		$_REQUEST = $data;
 		$uuid = $_REQUEST['uuid'];
 		$title_before = $_REQUEST['title_before'];
-		$first_name = $_REQUEST['title_before'];
-		$middle_name = $_REQUEST['title_before'];
-		$last_name = $_REQUEST['title_before'];
-		$title_after = $_REQUEST['title_before'];
-		$picture_url = $_REQUEST['title_before'];
-		$location = $_REQUEST['title_before'];
-		$claim = $_REQUEST['title_before'];
-		$bio = $_REQUEST['title_before'];
-		$tags = $_REQUEST['title_before'];
+		$first_name = $_REQUEST['first_name'];
+		$middle_name = $_REQUEST['middle_name'];
+		$last_name = $_REQUEST['last_name'];
+		$title_after = $_REQUEST['title_after'];
+		$picture_url = $_REQUEST['picture_url'];
+		$location = $_REQUEST['location'];
+		$claim = $_REQUEST['claim'];
+		$bio = $_REQUEST['bio'];
+		$tags = $_REQUEST['tags'];
 		$price_per_hour = $_REQUEST['price_per_hour'];
 		$contact = $_REQUEST['contact'];
+		$tagsString = json_encode($tags); 
+		$contactString = json_encode($contact); 
 
 		$sql = "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact)
-VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '$title_after', '$picture_url', '$location', '$claim', '$bio', '$tags', '$price_per_hour', '$contact')";
+VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '$title_after', '$picture_url', '$location', '$claim', '$bio', '$tagsString', '$price_per_hour', '$contactString')";
 
 		if ($conn->query($sql) === TRUE) {
 			echo json_encode($data);
