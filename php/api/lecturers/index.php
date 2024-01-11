@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 /*/
 
 Midaval - TdA24 Nominační kolo API
@@ -24,7 +22,6 @@ try {
 
     // Zpracování GET požadavku při zadaném UUID
     if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["uuid"])) {
-	    /*/
         // $uuid = $_GET["uuid"];
         $stmt = $conn->prepare("SELECT * FROM lecturers WHERE uuid = ?");
         $stmt->bind_param("s", $uuid); 
@@ -57,9 +54,7 @@ try {
             http_response_code(404);
             echo '{"code": 404, "message": "User not found"}';
         }
-	    /*/
     } elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
-	    /*/
         $result = $conn->query("SELECT * FROM lecturers");
 
         $lecturers = [];
@@ -89,7 +84,6 @@ try {
         } else {
             echo json_encode((object) [], JSON_PRETTY_PRINT);
         }
-	    /*/
 } elseif ($_SERVER["REQUEST_METHOD"] === "POST") {
 $jsonData = file_get_contents('php://input');
 
@@ -120,7 +114,6 @@ VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '
 
 		$conn->close();
 } elseif ($_SERVER["REQUEST_METHOD"] === "PUT" && isset($_GET["uuid"])) {
-	    /*/
     $uuid = $_GET["uuid"];
     $putdata = file_get_contents("php://input");
     $data = json_decode($putdata, true);
@@ -159,9 +152,7 @@ VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '
     http_response_code(200);
     echo json_encode(["message" => "Lecturer updated successfully"]);
     exit();
-	    /*/
 } elseif ($_SERVER["REQUEST_METHOD"] === "DELETE" && isset($_GET["uuid"])) {
-	    /*/
     $uuid = $_GET["uuid"];
 
     $selectStmt = $conn->prepare("SELECT * FROM lecturers WHERE uuid = ?");
@@ -193,14 +184,11 @@ VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '
     $selectStmt->close();
     $conn->close();
     exit();
-	    /*/
 } else {
 		http_response_code(400);
 		echo json_encode(["error" => "Invalid request method"]);
 		exit();
 	}
-
-	$conn->close();
 } catch (Exception $e) {
 	http_response_code(500);
 	echo json_encode(["error" => $e->getMessage()], JSON_FORCE_OBJECT);
