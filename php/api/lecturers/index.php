@@ -120,10 +120,6 @@ try {
         echo json_encode($data);
 
         $stmt->close();
-} catch (mysqli_sql_exception $e) {
-
-    echo "Error: " . $e->getMessage();
-}
 } elseif ($_SERVER["REQUEST_METHOD"] === "PUT" && isset($_GET["uuid"])) {
     $uuid = $_GET["uuid"];
     $putdata = file_get_contents("php://input");
@@ -202,7 +198,7 @@ try {
 	}
 
 	$conn->close();
-} catch (Exception $e) {
+}} catch (Exception $e) {
 	http_response_code(500);
 	echo json_encode(["error" => $e->getMessage()], JSON_FORCE_OBJECT);
 }
