@@ -7,82 +7,83 @@ Midaval - TdA24 Nominační kolo API
 
 header("Content-Type: application/json; charset=utf-8");
 
+$servername = "127.0.0.1";
+$username = "databaze";
+$password = getenv('DB_PASSWORD');
+$dbname = "lecturerdb";
+
 try {
-	// Připojení se na databázi
-	$db = new SQLite3("database.db");
-	    if (!$db) {
-        throw new Exception("Unable to open database for writing");
+    // Připojení k databázi
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    if ($conn->connect_error) {
+        throw new Exception("Connection failed: " . $conn->connect_error);
     }
 
-	// Zpracování GET požadavku při zadaném UUID
-	if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["uuid"])) {
-		$uuid = $_GET["uuid"];
-		$stmt = $db->prepare("SELECT * FROM lecturers WHERE uuid = :uuid");
-		$stmt->bindParam(":uuid", $uuid);
-		$result = $stmt->execute();
+    // Zpracování GET požadavku při zadaném UUID
+    if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["uuid"])) {
+        $uuid = $_GET["uuid"];
+        $stmt = $conn->prepare("SELECT * FROM lecturers WHERE uuid = ?");
+        $stmt->bind_param("s", $uuid);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-		$lecturer = $result->fetchArray(SQLITE3_ASSOC);
+        $lecturer = $result->fetch_assoc();
 
-		if ($lecturer) {
-			// Dekódování složitějších objektů
-			$lecturer["tags"] = json_decode($lecturer["tags"]);
-			$lecturer["contact"] = json_decode($lecturer["contact"], true);
+        if ($lecturer) {
+            // Dekódování složitějších objektů
+            $lecturer["tags"] = json_decode($lecturer["tags"]);
+            $lecturer["contact"] = json_decode($lecturer["contact"], true);
 
-			if (
-				json_last_error() !== JSON_ERROR_NONE ||
-				!is_array($lecturer["tags"])
-			) {
-				$lecturer["tags"] = [];
-			}
+            if (
+                json_last_error() !== JSON_ERROR_NONE ||
+                !is_array($lecturer["tags"])
+            ) {
+                $lecturer["tags"] = [];
+            }
 
-			if (
-				json_last_error() !== JSON_ERROR_NONE ||
-				!is_array($lecturer["contact"])
-			) {
-				$lecturer["contact"] = [];
-			}
+            if (
+                json_last_error() !== JSON_ERROR_NONE ||
+                !is_array($lecturer["contact"])
+            ) {
+                $lecturer["contact"] = [];
+            }
 
-			echo json_encode($lecturer, JSON_PRETTY_PRINT);
-		} else {
-			http_response_code(404);
-			echo '{';
-			echo '"code": 404,';
-			echo '"message": "User not found"';
-			echo '}';
-		}
-		// Zpracování GET požadavku bez zadaného UUID
-	} elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
-		$result = $db->query("SELECT * FROM lecturers");
+            echo json_encode($lecturer, JSON_PRETTY_PRINT);
+        } else {
+            http_response_code(404);
+            echo '{"code": 404, "message": "User not found"}';
+        }
+    } elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
+        $result = $conn->query("SELECT * FROM lecturers");
 
-		$lecturers = [];
-		while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+        $lecturers = [];
+        while ($row = $result->fetch_assoc()) {
+            $row["tags"] = json_decode($row["tags"]);
+            $row["contact"] = json_decode($row["contact"], true);
 
-			$row["tags"] = json_decode($row["tags"]);
-			$row["contact"] = json_decode($row["contact"], true);
+            if (
+                json_last_error() !== JSON_ERROR_NONE ||
+                !is_array($row["tags"])
+            ) {
+                $row["tags"] = [];
+            }
 
-			if (
-				json_last_error() !== JSON_ERROR_NONE ||
-				!is_array($row["tags"])
-			) {
-				$row["tags"] = [];
-			}
+            if (
+                json_last_error() !== JSON_ERROR_NONE ||
+                !is_array($row["contact"])
+            ) {
+                $row["contact"] = [];
+            }
 
-			if (
-				json_last_error() !== JSON_ERROR_NONE ||
-				!is_array($row["contact"])
-			) {
-				$row["contact"] = [];
-			}
+            $lecturers[] = $row;
+        }
 
-			$lecturers[] = $row;
-		}
-
-		if (count($lecturers) > 0) {
-			echo json_encode($lecturers, JSON_PRETTY_PRINT);
-		} else {
-			echo json_encode((object) [], JSON_PRETTY_PRINT);
-		}
-		// Zpracování POST požadavku
+        if (count($lecturers) > 0) {
+            echo json_encode($lecturers, JSON_PRETTY_PRINT);
+        } else {
+            echo json_encode((object) [], JSON_PRETTY_PRINT);
+        }
 } elseif ($_SERVER["REQUEST_METHOD"] === "POST") {
     $postdata = file_get_contents("php://input");
     $data = json_decode($postdata, true);
@@ -93,8 +94,7 @@ try {
         exit();
     }
 
-    // Perform some basic validation to ensure required fields exist in $data
-    $requiredFields = ["uuid", "title_before", "first_name", "last_name", /* Add other required fields here */];
+    $requiredFields = ["uuid", "title_before", "first_name", "last_name", "middle_name", "title_after", "picture_url", "location", "claim", "bio", "tags", "price_per_hour", "contact"];
 
     foreach ($requiredFields as $field) {
         if (!isset($data[$field])) {
@@ -104,135 +104,125 @@ try {
         }
     }
 
-    // Additional handling or validation of specific fields can be added here
+    $servername = "127.0.0.1";
+    $username = "databaze";
+    $password = getenv('DB_PASSWORD');
+    $dbname = "lecturerdb";
 
-    // Database connection and preparation of INSERT query
-    $db = new SQLite3("database.db");
+    try {
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) {
+            throw new Exception("Connection failed: " . $conn->connect_error);
+        }
 
-    $stmt = $db->prepare(
-        "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact) VALUES (:uuid, :title_before, :first_name, :middle_name, :last_name, :title_after, :picture_url, :location, :claim, :bio, :tags, :price_per_hour, :contact)"
-    );
+        $stmt = $conn->prepare(
+            "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        );
 
-    // Binding parameters
-    $stmt->bindValue(":uuid", $data["uuid"]);
-    $stmt->bindValue(":title_before", $data["title_before"]);
-    $stmt->bindValue(":first_name", $data["first_name"]);
-    $stmt->bindValue(":middle_name", $data["middle_name"]);
-    $stmt->bindValue(":last_name", $data["last_name"]);
-    $stmt->bindValue(":title_after", $data["title_after"]);
-    $stmt->bindValue(":picture_url", $data["picture_url"] ?? '');
-    $stmt->bindValue(":location", $data["location"] ?? '');
-    $stmt->bindValue(":claim", $data["claim"] ?? '');
-    $stmt->bindValue(":bio", $data["bio"] ?? '');
-    $stmt->bindValue(":tags", json_encode($data["tags"] ?? []));
-    $stmt->bindValue(":price_per_hour", $data["price_per_hour"] ?? 0);
-    $stmt->bindValue(":contact", json_encode($data["contact"] ?? []));
+        $stmt->bind_param("ssssssssssidi", $data["uuid"], $data["title_before"], $data["first_name"], $data["middle_name"], $data["last_name"], $data["title_after"], $data["picture_url"] ?? '', $data["location"] ?? '', $data["claim"] ?? '', $data["bio"] ?? '', json_encode($data["tags"] ?? []), $data["price_per_hour"] ?? 0, json_encode($data["contact"] ?? []));
 
-    $result = $stmt->execute();
+        $result = $stmt->execute();
 
-    if (!$result) {
+        if (!$result) {
+            http_response_code(500);
+            echo json_encode(["error" => "Failed to insert data into the database"]);
+            exit();
+        }
+
+        $insertedId = $conn->insert_id;
+        $selectStmt = $conn->prepare("SELECT * FROM lecturers WHERE id = ?");
+        $selectStmt->bind_param("i", $insertedId);
+        $selectStmt->execute();
+        $selectResult = $selectStmt->get_result();
+        $lecturer = $selectResult->fetch_assoc();
+
+        $conn->close();
+
+        if (!$lecturer) {
+            http_response_code(500);
+            echo json_encode(["error" => "Failed to fetch inserted data"]);
+            exit();
+        }
+
+        http_response_code(200);
+        echo json_encode($lecturer);
+        exit();
+    } catch (Exception $e) {
         http_response_code(500);
-        echo json_encode(["error" => "Failed to insert data into the database"]);
+        echo json_encode(["error" => $e->getMessage()], JSON_FORCE_OBJECT);
+    }
+} elseif ($_SERVER["REQUEST_METHOD"] === "PUT" && isset($_GET["uuid"])) {
+    $uuid = $_GET["uuid"];
+    $putdata = file_get_contents("php://input");
+    $data = json_decode($putdata, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        http_response_code(400);
+        echo json_encode(["error" => "Invalid JSON format"]);
         exit();
     }
 
-    // Fetch the inserted data to return as a response
-    $insertedId = $db->lastInsertRowID();
-    $selectStmt = $db->prepare("SELECT * FROM lecturers WHERE rowid = :id");
-    $selectStmt->bindValue(":id", $insertedId);
-    $selectResult = $selectStmt->execute();
-    $lecturer = $selectResult->fetchArray(SQLITE3_ASSOC);
+    $setCommands = [];
+    $bindParams = ["uuid" => $uuid];
 
-    $db->close();
-
-    if (!$lecturer) {
-        http_response_code(500);
-        echo json_encode(["error" => "Failed to fetch inserted data"]);
-        exit();
+    foreach ($data as $key => $value) {
+        if ($key !== "uuid") {
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+            $setCommands[] = "$key = ?";
+            $bindParams[$key] = is_array($value) ? json_encode($value) : $value;
+        }
     }
+
+    $setCommands = implode(", ", $setCommands);
+    $updateQuery = "UPDATE lecturers SET $setCommands WHERE uuid = :uuid";
+
+    $stmt = $conn->prepare($updateQuery);
+
+    foreach ($bindParams as $param => &$paramValue) {
+        $stmt->bindParam(":$param", $paramValue);
+    }
+
+    $stmt->execute();
+    $conn->close();
 
     http_response_code(200);
-    echo json_encode($lecturer);
+    echo json_encode(["message" => "Lecturer updated successfully"]);
     exit();
-		// Zpracování PUT požadavku
-} elseif ($_SERVER["REQUEST_METHOD"] === "PUT" && isset($_GET["uuid"])) {
-		$uuid = $_GET["uuid"];
-		$putdata = file_get_contents("php://input");
-		$data = json_decode($putdata, true);
+} elseif ($_SERVER["REQUEST_METHOD"] === "DELETE" && isset($_GET["uuid"])) {
+    $uuid = $_GET["uuid"];
 
-		if (json_last_error() !== JSON_ERROR_NONE) {
-			throw new Exception("Invalid JSON format");
-		}
+    $selectStmt = $conn->prepare("SELECT * FROM lecturers WHERE uuid = ?");
+    $selectStmt->bind_param("s", $uuid);
+    $selectStmt->execute();
+    $result = $selectStmt->get_result();
+    $row = $result->fetch_assoc();
 
-		$setCommands = [];
-		foreach ($data as $key => $value) {
-			if ($key !== "uuid") {
-				if (is_array($value)) {
-					$value = json_encode($value);
-				}
-				$setCommands[] = "$key = :$key";
-			}
-		}
-		$setCommands = implode(", ", $setCommands);
+    if (!$row) {
+        http_response_code(404);
+        echo json_encode(["code" => 404, "message" => "User not found"]);
+        exit();
+    }
 
-		$stmt = $db->prepare(
-			"UPDATE lecturers SET $setCommands WHERE uuid = :uuid"
-		);
-		$stmt->bindParam(":uuid", $uuid);
-		foreach ($data as $key => $value) {
+    $deleteStmt = $conn->prepare("DELETE FROM lecturers WHERE uuid = ?");
+    $deleteStmt->bind_param("s", $uuid);
+    $deleteStmt->execute();
 
-			if ($key !== "uuid") {
+    $rowsAffected = $conn->affected_rows;
 
-				$stmt->bindValue(
-					":$key",
-					is_array($value) ? json_encode($value) : $value
-				);
-			}
-		}
-		$stmt->execute();
+    if ($rowsAffected > 0) {
+        http_response_code(204);
+    } else {
+        http_response_code(404);
+        echo json_encode(["code" => 404, "message" => "User not found"]);
+    }
 
-		$db->close();
-
-		http_response_code(200);
-		echo json_encode(["message" => "Lecturer updated successfully"]);
-		exit();
-	} elseif ($_SERVER["REQUEST_METHOD"] === "DELETE" && isset($_GET["uuid"])) {
-		$uuid = $_GET["uuid"];
-
-		$stmt = $db->prepare("SELECT * FROM lecturers WHERE uuid = :uuid");
-		$stmt->bindParam(":uuid", $uuid);
-		$result = $stmt->execute();
-
-		$row = $result->fetchArray(SQLITE3_ASSOC);
-		if (!$row) {
-
-			http_response_code(404);
-			echo '{';
-			echo '"code": 404,';
-			echo '"message": "User not found"';
-			echo '}';
-			exit();
-		}
-
-		$deleteStmt = $db->prepare("DELETE FROM lecturers WHERE uuid = :uuid");
-		$deleteStmt->bindParam(":uuid", $uuid);
-		$deleteStmt->execute();
-
-		$rowsAffected = $db->changes();
-
-		$db->close();
-
-		if ($rowsAffected > 0) {
-			http_response_code(204);
-		} else {
-			http_response_code(404);
-			echo '{';
-			echo '"code": 404,';
-			echo '"message": "User not found"';
-			echo '}';
-		}
-		exit();
-	} else {
+    $deleteStmt->close();
+    $selectStmt->close();
+    $conn->close();
+    exit();
+} else {
 		http_response_code(400);
 		echo json_encode(["error" => "Invalid request method"]);
 		exit();
