@@ -111,7 +111,7 @@ VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '
 		if ($conn->query($sql) === TRUE) {
 			$data['uuid'] = $uuid;
 
-			$response = ["data" => $data];
+			$response = $data;
 
 			echo json_encode($response);
 		} else {
