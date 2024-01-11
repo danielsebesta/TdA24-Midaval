@@ -85,90 +85,43 @@ try {
             echo json_encode((object) [], JSON_PRETTY_PRINT);
         }
 } elseif ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $postdata = file_get_contents("php://input");
-    $data = json_decode($postdata, true);
+$input_data = file_get_contents('php://input');
+$data = json_decode($input_data, true);
 
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        http_response_code(400);
-        echo json_encode(["error" => "Invalid JSON format"]);
-        exit();
-    }
+    $sql = "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
 
-    $requiredFields = ["uuid", "title_before", "first_name", "last_name", "middle_name", "title_after", "picture_url", "location", "claim", "bio", "tags", "price_per_hour", "contact"];
+    // Bind parameters
+    $stmt->bind_param(
+        "sssssssssssis",
+        $data['uuid'],
+        $data['title_before'],
+        $data['first_name'],
+        $data['middle_name'],
+        $data['last_name'],
+        $data['title_after'],
+        $data['picture_url'],
+        $data['location'],
+        $data['claim'],
+        $data['bio'],
+        json_encode($data['tags']),
+        $data['price_per_hour'],
+        json_encode($data['contact'])
+    );
 
-    foreach ($requiredFields as $field) {
-        if (!isset($data[$field])) {
-            http_response_code(400);
-            echo json_encode(["error" => "Missing required field: $field"]);
-            exit();
-        }
-    }
+    // Execute the statement
+    $stmt->execute();
 
-    $servername = "127.0.0.1";
-    $username = "databaze";
-    $password = getenv('DB_PASSWORD');
-    $dbname = "lecturerdb";
+    // Display the entire person's information
+    echo json_encode($data);
 
-    try {
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        if ($conn->connect_error) {
-            throw new Exception("Connection failed: " . $conn->connect_error);
-        }
-
-        $stmt = $conn->prepare(
-            "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        );
-
-       $pictureUrl = json_encode($data["picture_url"] ?? '');
-$location = $data["location"] ?? '';
-$claim = $data["claim"] ?? '';
-$bio = $data["bio"] ?? '';
-$tags = json_encode($data["tags"] ?? []);
-$pricePerHour = $data["price_per_hour"] ?? 0;
-$contact = json_encode($data["contact"] ?? []);
-
-$stmt->bind_param("ssssssssssids", 
-    $data["uuid"],
-    $data["title_before"],
-    $data["first_name"],
-    $data["middle_name"],
-    $data["last_name"],
-    $data["title_after"],
-    $pictureUrl,
-    $location,
-    $claim,
-    $bio,
-    $tags,
-    $pricePerHour,
-    $contact
-);
-        $result = $stmt->execute();
-
-        if (!$result) {
-            throw new Exception("Failed to insert data into the database");
-        }
-
-$insertedId = $conn->insert_id;
-$selectStmt = $conn->prepare("SELECT * FROM lecturers WHERE uuid = ?");
-$selectStmt->bind_param("s", $insertedId);
-$selectStmt->execute();
-$selectResult = $selectStmt->get_result();
-$lecturer = $selectResult->fetch_assoc();
-
-        $conn->close();
-
-        if (!$lecturer) {
-            throw new Exception("Failed to fetch inserted data");
-        }
-
-        http_response_code(200);
-        echo json_encode($lecturer);
-        exit();
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode(["error" => $e->getMessage()], JSON_FORCE_OBJECT);
-        exit();
-    }
+    // Close the connection
+    $stmt->close();
+    $conn->close();
+} catch (mysqli_sql_exception $e) {
+    // Log the error instead of displaying it in production
+    echo "Error: " . $e->getMessage();
+}
 } elseif ($_SERVER["REQUEST_METHOD"] === "PUT" && isset($_GET["uuid"])) {
     $uuid = $_GET["uuid"];
     $putdata = file_get_contents("php://input");
