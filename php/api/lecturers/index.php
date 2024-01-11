@@ -87,39 +87,34 @@ try {
             echo json_encode((object) [], JSON_PRETTY_PRINT);
         }
 } elseif ($_SERVER["REQUEST_METHOD"] === "POST") {
+$jsonData = file_get_contents('php://input');
 
-    $jsonData = file_get_contents('php://input');
- 
-    $data = json_decode($jsonData, true);
+		$data = json_decode($jsonData, true);
+		$_REQUEST = $data;
+		$uuid = $_REQUEST['uuid'];
+		$title_before = $_REQUEST['title_before'];
+		$first_name = $_REQUEST['title_before'];
+		$middle_name = $_REQUEST['title_before'];
+		$last_name = $_REQUEST['title_before'];
+		$title_after = $_REQUEST['title_before'];
+		$picture_url = $_REQUEST['title_before'];
+		$location = $_REQUEST['title_before'];
+		$claim = $_REQUEST['title_before'];
+		$bio = $_REQUEST['title_before'];
+		$tags = $_REQUEST['title_before'];
+		$price_per_hour = $_REQUEST['price_per_hour'];
+		$contact = $_REQUEST['contact'];
 
+		$sql = "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact)
+VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '$title_after', '$picture_url', '$location', '$claim', '$bio', '$tags', '$price_per_hour', '$contact')";
 
-    if ($data !== null) {
+		if ($conn->query($sql) === TRUE) {
+			echo json_encode($data);
+		} else {
+			echo "Error: " . $sql . "<br>" . $conn->error;
+		}
 
-        $sql = "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact) VALUES (:uuid, :title_before, :first_name, :middle_name, :last_name, :title_after, :picture_url, :location, :claim, :bio, :tags, :price_per_hour, :contact)";
-        $stmt = $conn->prepare($sql);
-
-
-        $stmt->bindValue(1, $data["uuid"]);
-        $stmt->bindValue(2, $data["title_before"]);
-        $stmt->bindValue(3, $data["first_name"]);
-        $stmt->bindValue(4, $data["middle_name"]);
-        $stmt->bindValue(5, $data["last_name"]);
-        $stmt->bindValue(6, $data["title_after"]);
-        $stmt->bindValue(7, $data["picture_url"]);
-        $stmt->bindValue(8, $data["location"]);
-        $stmt->bindValue(9, $data["claim"]);
-        $stmt->bindValue(10, $data["bio"]);
-        $stmt->bindValue(11, json_encode($data["tags"]));
-        $stmt->bindValue(12, $data["price_per_hour"]);
-        $stmt->bindValue(13, json_encode($data["contact"]));
-
- 
-        $stmt->execute();
-
-      
-        echo json_encode($data);
-
-        $stmt->close();
+		$conn->close();
 } elseif ($_SERVER["REQUEST_METHOD"] === "PUT" && isset($_GET["uuid"])) {
     $uuid = $_GET["uuid"];
     $putdata = file_get_contents("php://input");
