@@ -87,41 +87,41 @@ try {
             echo json_encode((object) [], JSON_PRETTY_PRINT);
         }
 } elseif ($_SERVER["REQUEST_METHOD"] === "POST") {
-$input_data = file_get_contents('php://input');
-$data = json_decode($input_data, true);
 
-    $sql = "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
+    $jsonData = file_get_contents('php://input');
+ 
+    $data = json_decode($jsonData, true);
 
-    // Bind parameters
-    $stmt->bind_param(
-        "sssssssssssis",
-        $data['uuid'],
-        $data['title_before'],
-        $data['first_name'],
-        $data['middle_name'],
-        $data['last_name'],
-        $data['title_after'],
-        $data['picture_url'],
-        $data['location'],
-        $data['claim'],
-        $data['bio'],
-        json_encode($data['tags']),
-        $data['price_per_hour'],
-        json_encode($data['contact'])
-    );
 
-    // Execute the statement
-    $stmt->execute();
+    if ($data !== null) {
 
-    // Display the entire person's information
-    echo json_encode($data);
+        $sql = "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact) VALUES (:uuid, :title_before, :first_name, :middle_name, :last_name, :title_after, :picture_url, :location, :claim, :bio, :tags, :price_per_hour, :contact)";
+        $stmt = $conn->prepare($sql);
 
-    // Close the connection
-    $stmt->close();
-    $conn->close();
+
+        $stmt->bindValue(":uuid", $data["uuid"]);
+        $stmt->bindValue(":title_before", $data["title_before"]);
+        $stmt->bindValue(":first_name", $data["first_name"]);
+        $stmt->bindValue(":middle_name", $data["middle_name"]);
+        $stmt->bindValue(":last_name", $data["last_name"]);
+        $stmt->bindValue(":title_after", $data["title_after"]);
+        $stmt->bindValue(":picture_url", $data["picture_url"]);
+        $stmt->bindValue(":location", $data["location"]);
+        $stmt->bindValue(":claim", $data["claim"]);
+        $stmt->bindValue(":bio", $data["bio"]);
+        $stmt->bindValue(":tags", json_encode($data["tags"])); 
+        $stmt->bindValue(":price_per_hour", $data["price_per_hour"]);
+        $stmt->bindValue(":contact", json_encode($data["contact"])); 
+
+ 
+        $stmt->execute();
+
+      
+        echo json_encode($data);
+
+        $stmt->close();
 } catch (mysqli_sql_exception $e) {
-    // Log the error instead of displaying it in production
+
     echo "Error: " . $e->getMessage();
 }
 } elseif ($_SERVER["REQUEST_METHOD"] === "PUT" && isset($_GET["uuid"])) {
