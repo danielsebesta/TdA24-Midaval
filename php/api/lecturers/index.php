@@ -89,7 +89,7 @@ $jsonData = file_get_contents('php://input');
 
 		$data = json_decode($jsonData, true);
 		$_REQUEST = $data;
-		$uuid = $_REQUEST['uuid'];
+		$uuid = isset($_REQUEST['uuid']) ? $_REQUEST['uuid'] : generateRandomUUID();
 		$title_before = $_REQUEST['title_before'];
 		$first_name = $_REQUEST['first_name'];
 		$middle_name = $_REQUEST['middle_name'];
@@ -194,4 +194,18 @@ VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '
 } catch (Exception $e) {
 	http_response_code(500);
 	echo json_encode(["error" => $e->getMessage()], JSON_FORCE_OBJECT);
+}
+function generateRandomUUID()
+{
+	return sprintf(
+		'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+		mt_rand(0, 0xffff),
+		mt_rand(0, 0xffff),
+		mt_rand(0, 0xffff),
+		mt_rand(0, 0x0fff) | 0x4000,
+		mt_rand(0, 0x3fff) | 0x8000,
+		mt_rand(0, 0xffff),
+		mt_rand(0, 0xffff),
+		mt_rand(0, 0xffff)
+	);
 }
