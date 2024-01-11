@@ -109,9 +109,13 @@ $jsonData = file_get_contents('php://input');
 VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '$title_after', '$picture_url', '$location', '$claim', '$bio', '$tagsString', '$price_per_hour', '$contactString')";
 
 		if ($conn->query($sql) === TRUE) {
-			echo json_encode($data);
+			$data['uuid'] = $uuid;
+
+			$response = $data;
+
+			echo json_encode($response);
 		} else {
-			echo "Error: " . $sql . "<br>" . $conn->error;
+			echo "Error: " . $sql + $conn->error;
 		}
 
 		$conn->close();
