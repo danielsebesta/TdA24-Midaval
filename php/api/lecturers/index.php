@@ -148,12 +148,12 @@ $stmt->bind_param("ssssssssssids",
             throw new Exception("Failed to insert data into the database");
         }
 
-        $insertedId = $conn->insert_id;
-        $selectStmt = $conn->prepare("SELECT * FROM lecturers WHERE id = ?");
-        $selectStmt->bind_param("i", $insertedId);
-        $selectStmt->execute();
-        $selectResult = $selectStmt->get_result();
-        $lecturer = $selectResult->fetch_assoc();
+$insertedId = $conn->insert_id;
+$selectStmt = $conn->prepare("SELECT * FROM lecturers WHERE uuid = ?");
+$selectStmt->bind_param("s", $insertedId);
+$selectStmt->execute();
+$selectResult = $selectStmt->get_result();
+$lecturer = $selectResult->fetch_assoc();
 
         $conn->close();
 
