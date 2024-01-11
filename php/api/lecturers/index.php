@@ -99,19 +99,19 @@ try {
         $stmt = $conn->prepare($sql);
 
 
-        $stmt->bindValue(":uuid", $data["uuid"]);
-        $stmt->bindValue(":title_before", $data["title_before"]);
-        $stmt->bindValue(":first_name", $data["first_name"]);
-        $stmt->bindValue(":middle_name", $data["middle_name"]);
-        $stmt->bindValue(":last_name", $data["last_name"]);
-        $stmt->bindValue(":title_after", $data["title_after"]);
-        $stmt->bindValue(":picture_url", $data["picture_url"]);
-        $stmt->bindValue(":location", $data["location"]);
-        $stmt->bindValue(":claim", $data["claim"]);
-        $stmt->bindValue(":bio", $data["bio"]);
-        $stmt->bindValue(":tags", json_encode($data["tags"])); 
-        $stmt->bindValue(":price_per_hour", $data["price_per_hour"]);
-        $stmt->bindValue(":contact", json_encode($data["contact"])); 
+        $stmt->bindValue(1, $data["uuid"]);
+        $stmt->bindValue(2, $data["title_before"]);
+        $stmt->bindValue(3, $data["first_name"]);
+        $stmt->bindValue(4, $data["middle_name"]);
+        $stmt->bindValue(5, $data["last_name"]);
+        $stmt->bindValue(6, $data["title_after"]);
+        $stmt->bindValue(7, $data["picture_url"]);
+        $stmt->bindValue(8, $data["location"]);
+        $stmt->bindValue(9, $data["claim"]);
+        $stmt->bindValue(10, $data["bio"]);
+        $stmt->bindValue(11, json_encode($data["tags"]));
+        $stmt->bindValue(12, $data["price_per_hour"]);
+        $stmt->bindValue(13, json_encode($data["contact"]));
 
  
         $stmt->execute();
