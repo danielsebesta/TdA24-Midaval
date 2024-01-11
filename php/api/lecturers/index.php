@@ -119,14 +119,26 @@ try {
             "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
-        $stmt->bind_param("ssssssssssidi", $data["uuid"], $data["title_before"], $data["first_name"], $data["middle_name"], $data["last_name"], $data["title_after"], $data["picture_url"] ?? '', $data["location"] ?? '', $data["claim"] ?? '', $data["bio"] ?? '', json_encode($data["tags"] ?? []), $data["price_per_hour"] ?? 0, json_encode($data["contact"] ?? []));
+        $stmt->bind_param("ssssssssssidi", 
+            $data["uuid"],
+            $data["title_before"],
+            $data["first_name"],
+            $data["middle_name"],
+            $data["last_name"],
+            $data["title_after"],
+            $data["picture_url"] ?? '',
+            $data["location"] ?? '',
+            $data["claim"] ?? '',
+            $data["bio"] ?? '',
+            json_encode($data["tags"] ?? []),
+            $data["price_per_hour"] ?? 0,
+            json_encode($data["contact"] ?? [])
+        );
 
         $result = $stmt->execute();
 
         if (!$result) {
-            http_response_code(500);
-            echo json_encode(["error" => "Failed to insert data into the database"]);
-            exit();
+            throw new Exception("Failed to insert data into the database");
         }
 
         $insertedId = $conn->insert_id;
@@ -139,9 +151,7 @@ try {
         $conn->close();
 
         if (!$lecturer) {
-            http_response_code(500);
-            echo json_encode(["error" => "Failed to fetch inserted data"]);
-            exit();
+            throw new Exception("Failed to fetch inserted data");
         }
 
         http_response_code(200);
@@ -150,6 +160,7 @@ try {
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(["error" => $e->getMessage()], JSON_FORCE_OBJECT);
+        exit();
     }
 } elseif ($_SERVER["REQUEST_METHOD"] === "PUT" && isset($_GET["uuid"])) {
     $uuid = $_GET["uuid"];
@@ -209,7 +220,7 @@ try {
     $deleteStmt->bind_param("s", $uuid);
     $deleteStmt->execute();
 
-    $rowsAffected = $conn->affected_rows;
+    $rowsAffected = $deleteStmt->affected_rows;
 
     if ($rowsAffected > 0) {
         http_response_code(204);
