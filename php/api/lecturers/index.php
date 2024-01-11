@@ -119,22 +119,29 @@ try {
             "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
-        $stmt->bind_param("ssssssssssidi", 
-            $data["uuid"],
-            $data["title_before"],
-            $data["first_name"],
-            $data["middle_name"],
-            $data["last_name"],
-            $data["title_after"],
-            $data["picture_url"] ?? '',
-            $data["location"] ?? '',
-            $data["claim"] ?? '',
-            $data["bio"] ?? '',
-            json_encode($data["tags"] ?? []),
-            $data["price_per_hour"] ?? 0,
-            json_encode($data["contact"] ?? [])
-        );
+       $pictureUrl = json_encode($data["picture_url"] ?? '');
+$location = $data["location"] ?? '';
+$claim = $data["claim"] ?? '';
+$bio = $data["bio"] ?? '';
+$tags = json_encode($data["tags"] ?? []);
+$pricePerHour = $data["price_per_hour"] ?? 0;
+$contact = json_encode($data["contact"] ?? []);
 
+$stmt->bind_param("ssssssssssids", 
+    $data["uuid"],
+    $data["title_before"],
+    $data["first_name"],
+    $data["middle_name"],
+    $data["last_name"],
+    $data["title_after"],
+    $pictureUrl,
+    $location,
+    $claim,
+    $bio,
+    $tags,
+    $pricePerHour,
+    $contact
+);
         $result = $stmt->execute();
 
         if (!$result) {
