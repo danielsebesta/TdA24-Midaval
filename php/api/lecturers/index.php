@@ -99,7 +99,7 @@ $jsonData = file_get_contents('php://input');
 		$location = $_REQUEST['location'];
 		$claim = $_REQUEST['claim'];
 		$bio = $_REQUEST['bio'];
- $tags = $_REQUEST['tags'];
+    $tags = $_REQUEST['tags'];
     $price_per_hour = $_REQUEST['price_per_hour'];
     $contact = $_REQUEST['contact'];
     $tagsArray = [];
@@ -113,18 +113,14 @@ $jsonData = file_get_contents('php://input');
     }
 
     $contactString = json_encode($contact);
-
-    $tagsString = '[';
-    foreach ($tagsArray as $tag) {
-        $tagsString .= '{"uuid":"' . $tag['uuid'] . '","name":"' . $tag['name'] . '"},';
-    }
-    $tagsString = rtrim($tagsString, ',') . ']';
+    $tagsString = json_encode($tagsArray);
 
 		$sql = "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact)
 VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '$title_after', '$picture_url', '$location', '$claim', '$bio', '$tagsString', '$price_per_hour', '$contactString')";
 
 		if ($conn->query($sql) === TRUE) {
         $data['uuid'] = $uuid;
+	$data['tags'] = $tagsArray;
         $response = $data;
 
         $jsonResponse = json_encode($response);
