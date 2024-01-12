@@ -99,11 +99,12 @@ $jsonData = file_get_contents('php://input');
 		$location = $_REQUEST['location'];
 		$claim = $_REQUEST['claim'];
 		$bio = $_REQUEST['bio'];
-    $tags = $_REQUEST['tags'];
+        $tags = $_REQUEST['tags'];
     $price_per_hour = $_REQUEST['price_per_hour'];
     $contact = $_REQUEST['contact'];
     $tagsArray = [];
 
+    // Generate a random UUID for each tag and build the tags array
     foreach ($tags as $tag) {
         $tagUUID = generateRandomUUID();
         $tagsArray[] = [
@@ -113,26 +114,14 @@ $jsonData = file_get_contents('php://input');
     }
 
     $contactString = json_encode($contact);
-    $tagsString = json_encode($tagsArray);
 
-    $decodedTags = json_decode($tagsString, true);
-
-    $formattedTags = [];
-    foreach ($decodedTags as $tag) {
-        $formattedTags[] = [
-            'uuid' => $tag['uuid'],
-            'name' => $tag['name'],
-        ];
-    }
-
-
-		$sql = "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact)
-VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '$title_after', '$picture_url', '$location', '$claim', '$bio', '" . json_encode($formattedTags) . "', '$price_per_hour', '$contactString')";
+    $sql = "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact)
+VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '$title_after', '$picture_url', '$location', '$claim', '$bio', '" . json_encode($tagsArray) . "', '$price_per_hour', '$contactString')";
 
 		if ($conn->query($sql) === TRUE) {
 $response = $data;
         $response['uuid'] = $uuid;
-        $response['tags'] = $formattedTags;
+        $response['tags'] = $tagsArray;
 
         $jsonResponse = json_encode($response);
 
