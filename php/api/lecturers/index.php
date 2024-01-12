@@ -115,13 +115,24 @@ $jsonData = file_get_contents('php://input');
     $contactString = json_encode($contact);
     $tagsString = json_encode($tagsArray);
 
+    $decodedTags = json_decode($tagsString, true);
+
+    $formattedTags = [];
+    foreach ($decodedTags as $tag) {
+        $formattedTags[] = [
+            'uuid' => $tag['uuid'],
+            'name' => $tag['name'],
+        ];
+    }
+
+
 		$sql = "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact)
-VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '$title_after', '$picture_url', '$location', '$claim', '$bio', '$tagsString', '$price_per_hour', '$contactString')";
+VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '$title_after', '$picture_url', '$location', '$claim', '$bio', '" . json_encode($formattedTags) . "', '$price_per_hour', '$contactString')";
 
 		if ($conn->query($sql) === TRUE) {
-        $data['uuid'] = $uuid;
-	$data['tags'] = $tagsArray;
-        $response = $data;
+$response = $data;
+        $response['uuid'] = $uuid;
+        $response['tags'] = $formattedTags;
 
         $jsonResponse = json_encode($response);
 
