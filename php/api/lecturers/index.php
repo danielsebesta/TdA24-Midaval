@@ -99,21 +99,32 @@ $jsonData = file_get_contents('php://input');
 		$location = $_REQUEST['location'];
 		$claim = $_REQUEST['claim'];
 		$bio = $_REQUEST['bio'];
-		$tags = $_REQUEST['tags'];
-		$price_per_hour = $_REQUEST['price_per_hour'];
-		$contact = $_REQUEST['contact'];
-		$tagsString = json_encode($tags); 
-		$contactString = json_encode($contact); 
+    $tags = $_REQUEST['tags'];
+    $price_per_hour = $_REQUEST['price_per_hour'];
+    $contact = $_REQUEST['contact'];
+    $tagsArray = [];
+
+    foreach ($tags as $tag) {
+        $tagUUID = generateRandomUUID();
+        $tagsArray[] = [
+            'uuid' => $tagUUID,
+            'name' => $tag,
+        ];
+    }
+
+    $tagsString = json_encode($tagsArray);
+    $contactString = json_encode($contact);
 
 		$sql = "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last_name, title_after, picture_url, location, claim, bio, tags, price_per_hour, contact)
 VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '$title_after', '$picture_url', '$location', '$claim', '$bio', '$tagsString', '$price_per_hour', '$contactString')";
 
 		if ($conn->query($sql) === TRUE) {
-			$data['uuid'] = $uuid;
+        $data['uuid'] = $uuid;
+        $response = $data;
 
-			$response = $data;
+        $jsonResponse = json_encode($response);
 
-			echo json_encode($response);
+        echo $jsonResponse;
 		} else {
 			echo "Error: " . $sql + $conn->error;
 		}
