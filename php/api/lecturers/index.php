@@ -121,16 +121,20 @@ $sql = "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last
 VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '$title_after', '$picture_url', '$location', '$claim', '$bio', '$tagsString', '$price_per_hour', '$contactString')";
 
 if ($conn->query($sql) === TRUE) {
-    $response = $data;
-    $response['uuid'] = $uuid;
-    $response['tags'] = $tagsArray;
+    // Fetch the inserted data from the database
+    $selectSql = "SELECT * FROM lecturers WHERE uuid = '$uuid'";
+    $result = $conn->query($selectSql);
 
-    $jsonResponse = json_encode($response);
-
-    echo $jsonResponse;
-		} else {
-			echo "Error: " . $sql + $conn->error;
-		}
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $jsonResponse = json_encode($row);
+        echo $jsonResponse;
+    } else {
+        echo "Error fetching data from the database.";
+    }
+} else {
+    echo "Error inserting data into the database.";
+}
 
 		$conn->close();
 } elseif ($_SERVER["REQUEST_METHOD"] === "PUT" && isset($_GET["uuid"])) {
