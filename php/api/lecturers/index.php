@@ -121,13 +121,16 @@ $sql = "INSERT INTO lecturers (uuid, title_before, first_name, middle_name, last
 VALUES ('$uuid', '$title_before', '$first_name', '$middle_name', '$last_name', '$title_after', '$picture_url', '$location', '$claim', '$bio', '$tagsString', '$price_per_hour', '$contactString')";
 
 if ($conn->query($sql) === TRUE) {
-    // Fetch the inserted data from the database
     $selectSql = "SELECT * FROM lecturers WHERE uuid = '$uuid'";
     $result = $conn->query($selectSql);
 
     if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $jsonResponse = json_encode($row);
+        $rows = [];
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
+
+        $jsonResponse = json_encode($rows);
         echo $jsonResponse;
     } else {
         echo "Error fetching data from the database.";
