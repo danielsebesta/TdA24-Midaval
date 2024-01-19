@@ -1,0 +1,107 @@
+:root {
+	--lalezar: 'Lalezar',
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		Roboto,
+		sans-serif;
+		--opensans: 'Open Sans',
+			system-ui,
+			-apple-system,
+			BlinkMacSystemFont,
+			Roboto,
+			sans-serif;
+}
+
+body {
+	font-family: var(--opensans);
+	color: #333333;
+}
+
+p {
+	color: #333333 !important;
+}
+
+
+.badge {
+	background: #7ec6d2;
+	color: #00384D;
+}
+
+h1 {
+	font-family: var(--lalezar);
+}
+
+.lead {
+	text-wrap: balance;
+}
+
+.btn-primary {
+	background: #74C7D3;
+	border: #74C7D3;
+}
+
+.btn-primary:hover {
+	background: #57959f;
+}
+
+.navbar {
+	top: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
+		margin: 32px auto;
+		border-radius: 30px;
+		position: fixed;
+		padding: 12px 0px 12px 32px;
+	font-family: var(--lalezar);
+	font-size: 1.2rem;
+	font-weight: 300;
+	background: white;
+	transition: all 0.3s linear;
+}
+
+.navbar.scroll {
+			background: white;
+			margin: 0px auto;
+					border-radius: 0 0 20px 20px;
+				transition: all 0.3s linear;
+}
+
+main {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.accordion-button:not(.collapsed) {
+    color: #333333 !important;
+}
+
+.btn-check:checked+.btn, :not(.btn-check)+.btn:active, .btn:first-child:active, .btn.active, .btn.show {
+    background: #74C7D3 !important;
+}
+
+.footer-title {
+    font-family: var(--lalezar);
+}
+
+
+
+
+
+/*media queries*/
+@media only screen and (min-width: 1200px){
+    #col{
+        max-width: 50%;
+    }
+}
+
+@media only screen and (max-width: 1200px){
+    #cont{
+        flex-direction: column;
+    }
+    #cont-reverse{
+        flex-direction: column-reverse;
+    }
+}
