@@ -20,11 +20,11 @@ margin-bottom: 3rem;
 	<div class="mask">
 		<div class="d-flex justify-content-center align-items-center h-100">
 			<div class="text-dark">
-				<h1 class=" display-1 text-body-emphasis">Vzdělávání na nové úrovni</h1>
+				<h1 class=" display-1 text-body-emphasis">Upsík, tohle mělo fungovat.</h1>
 				<div class="col-lg-6 mx-auto about-us">
-					<p class="lead mb-4">Nauč se konečně užitečné věci. S Teacher digital Agency to jde snadno, najdi si lektora podle svých možností a rozvívej svoje vědomosti.</p>
+					<p class="lead mb-4">Sice jsme nestihli vytvořit plnohodnotnou aplikaci, ale můžete si zkusit zahrát Valentinův remake Zeldy v Javascriptu.</p>
 					<div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-						<button type="button" class="btn btn-dark btn-rounded" data-mdb-ripple-init>Domluvit lekci</button>
+						<a href="/experiment/slimshadex.html"><button type="button" class="btn btn-dark btn-rounded" data-mdb-ripple-init>ZAHRÁT SI TU VELMI EPICKOU HRU</button></a>
 					</div>
 				</div>
 			</div>
