@@ -3,6 +3,15 @@ $page = "domu";
 include("head-template.php");
 
 ?>
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+   <style>
+    #search-results {
+display: flex;
+justify-content: center;
+flex-direction: column;
+margin-bottom: 3rem;
+}
+    </style>
 <div class="p-5 text-center bg-image" style="
       background-image: url('./assets/css/books.svg');
 			background-position: top;
@@ -68,8 +77,19 @@ include("head-template.php");
 			<li><a class="dropdown-item" href="#">Nejdražší</a></li>
 			<li><a class="dropdown-item" href="#">Nejnovější</a></li>
 		</ul>
-	</div><br><br>
-
+	</div><br><br><form hx-get="/experiment/search.php" hx-trigger="submit" hx-target="#search-results" class="d-flex flex-row justify-content-center w-25" style="gap:5px;">
+        <div class="form-outline" data-mdb-input-init>
+  <input type="text" id="search" name="q" required class="form-control" />
+  <label class="form-label" for="form12">Vyhledávejte lektory...</label>
+      
+</div>
+      <button type="submit" class="btn btn-secondary" data-mdb-ripple-init data-mdb-ripple-color="light">🔎</button>
+</form><br>
+        
+<!-- Container to display search results -->
+<div id="search-results">
+    <!-- Results will be displayed here -->
+</div>
 	<div class="accordion shadow-2 border border-0" id="valentin">
 		<div class="accordion-item">
 			<h2 class="accordion-header" id="headingOne">

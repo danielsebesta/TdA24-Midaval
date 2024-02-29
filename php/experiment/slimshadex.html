@@ -14,23 +14,23 @@
     let ctx = canvas.getContext("2d");
     document.addEventListener("keydown",keyDownHandler, false);
     document.addEventListener("keyup",keyUpHandler,false);
-    document.body.style.zoom = "288%";
+    document.body.style.zoom = "350%";
 
 
     let fps = 60;
     let worldTiles = new Image();
-    worldTiles.src = "tiles-overworld.png";
+    worldTiles.src = "tiles-overworld.png?";
     let chars1 = new Image();
-    chars1.src = "chars.png";
+    chars1.src = "chars.png?";
     let chars2 = new Image();
-    chars2.src = "chars2.png";
+    chars2.src = "chars2.png?";
     let link1 = new Image();
-    link1.src = "link.png";
+    link1.src = "link.png?";
     let hud = new Image();
-    hud.src = "pausescreen.png";
+    hud.src = "pausescreen.png?";
 
     let enemies = new Image();
-    enemies.src = "enemies.png";
+    enemies.src = "enemies.png?";
     let rightPressed = false;
     let leftPressed = false;
     let upPressed = false;
@@ -73,7 +73,7 @@
     let cursorX = 131;
     let cursorY = -152;
     let backgroundMusic = new Audio();
-    backgroundMusic.src = "./sounds/overworld_edit.mp3";
+    backgroundMusic.src = "./sounds/Overworld.mp3??";
     backgroundMusic.loop = true;
     let hasGameEnded = false;
     let hasGoodGameEnded = false;
@@ -81,7 +81,7 @@
     let heartReceived = false;
     let deathWait = 50;
     let fred = new Image();
-    fred.src = "Freddy.jpg";
+    fred.src = "Freddy.jpg?";
     let addedHeart = false;
     let addedHeart1 = false;
     let addedHeart2 = false;
@@ -137,7 +137,7 @@
             canAttackAgain = false;
 
             canShootSword = true;
-            playSound("./sounds/LOZ_sword_slash.wav")
+            playSound("./sounds/LOZ_Sword_Slash.wav?")
         }
         else if(e.keyCode == 32 && needInventoryScreen)
         {
@@ -309,7 +309,7 @@
                                 proj.y = linkY + 8;
                                 proj.ySpeed = 2;
                                 proj.isSwordProjectile = true;
-                                playSound("./sounds/LOZ_sword_shoot.wav");
+                                playSound("./sounds/LOZ_Sword_Shoot.wav?");
                                 projectiles.push(proj);
                                 canShootSword = false;
                             }
@@ -331,7 +331,7 @@
                                 proj.ySpeed =  - 2;
                                 canShootSword = false;
                                 proj.isSwordProjectile = true;
-                                playSound("./sounds/LOZ_sword_shoot.wav");
+                                playSound("./sounds/LOZ_Sword_Shoot.wav?");
                                 projectiles.push(proj);
                             }
                         }
@@ -352,7 +352,7 @@
                                 proj.xSpeed = -2;
                                 canShootSword = false;
                                 proj.isSwordProjectile = true;
-                                playSound("./sounds/LOZ_sword_shoot.wav");
+                                playSound("./sounds/LOZ_Sword_Shoot.wav?");
                                 projectiles.push(proj);
                             }
                         }
@@ -373,7 +373,7 @@
                                 proj.xSpeed = 2;
                                 canShootSword = false;
                                 proj.isSwordProjectile = true;
-                                playSound("./sounds/LOZ_sword_shoot.wav");
+                                playSound("./sounds/LOZ_Sword_Shoot.wav?");
                                 projectiles.push(proj);
                             }
                         };
@@ -572,7 +572,7 @@
                             {
                                 rupeeAmount += objects[i].rupeeValue;
                                 objects.splice(i,1);
-                                playSound("./sounds/LOZ_get_rupee.wav");
+                                playSound("./sounds/LOZ_Get_Rupee.wav?");
                                 continue;
                             }
 
@@ -687,7 +687,7 @@
                                         swordEquipped = 1;
                                         hasSword = true;
                                         animationCounter = 0;
-                                        playSound("./sounds/item.mp3");
+                                        playSound("./sounds/Item.mp3?");
                                 }
                                 
                                 objects.splice(i,1);
@@ -704,11 +704,11 @@
                                 (lastButtonPressed == "left" &&  objects[i].xSpeed >0) ||
                                 (lastButtonPressed == "right" &&  objects[i].xSpeed <0)))
                                 {
-                                    playSound("./sounds/LOZ_shield.wav");
+                                    playSound("./sounds/LOZ_Shield.wav?");
                                     objects.splice(i,1);
                                     return;
                                 }
-                                playSound("./sounds/LOZ_link_hurt.wav");
+                                playSound("./sounds/LOZ_Link_Hurt.wav??");
                                 if(objects[i].rockProjectile || objects[i].waterProjectile)
                                 {
                                     objects.splice(i,1);
@@ -720,7 +720,7 @@
                                 {
                                     hasGameEnded = true;
                                     backgroundMusic.pause();
-                                    playSound("./sounds/GameOver.mp3");
+                                    playSound("./sounds/GameOver.mp3?");
                                     
                                 }
                             }
@@ -757,11 +757,11 @@
                                         objects[i].health -= 1;
                                         if(objects[i].health == 0)
                                         {
-                                            playSound("./sounds/LOZ_enemy_die.wav");
+                                            playSound("./sounds/LOZ_Enemy_Die.wav?");
                                         }
                                         else
                                         {
-                                            playSound("./sounds/LOZ_enemy_hit.wav");
+                                            playSound("./sounds/LOZ_Enemy_Hit.wav?");
                                         }
                                     }
                         }
@@ -782,11 +782,11 @@
                                         objects[i].health -= 1;
                                         if(objects[i].health == 0)
                                         {
-                                            playSound("./sounds/LOZ_enemy_die.wav");
+                                            playSound("./sounds/LOZ_Enemy_Die.wav?");
                                         }
                                         else
                                         {
-                                            playSound("./sounds/LOZ_enemy_hit.wav");
+                                            playSound("./sounds/LOZ_Enemy_Hit.wav?");
                                         }
                                     }
                         }
@@ -807,11 +807,11 @@
                                         objects[i].health -= 1;
                                         if(objects[i].health == 0)
                                         {
-                                            playSound("./sounds/LOZ_enemy_die.wav");
+                                            playSound("./sounds/LOZ_Enemy_Die.wav?");
                                         }
                                         else
                                         {
-                                            playSound("./sounds/LOZ_enemy_hit.wav");
+                                            playSound("./sounds/LOZ_Enemy_Hit.wav?");
                                         }
                                     }
                         }
@@ -832,11 +832,11 @@
                                         objects[i].health -= 1;
                                         if(objects[i].health == 0)
                                         {
-                                            playSound("./sounds/LOZ_enemy_die.wav");
+                                            playSound("./sounds/LOZ_Enemy_Die.wav?");
                                         }
                                         else
                                         {
-                                            playSound("./sounds/LOZ_enemy_hit.wav");
+                                            playSound("./sounds/LOZ_Enemy_Hit.wav?");
                                         }
                                     }
                         }
@@ -984,12 +984,12 @@
                     if(gameObjects[i].line1Full.length != gameObjects[i].line1Current.length)
                     {
                         gameObjects[i].line1Current = gameObjects[i].line1Full.substring(0, gameObjects[i].line1Current.length + 1);
-                        playSound("./sounds/LOZ_text_slow.wav");
+                        playSound("./sounds/LOZ_Text_Slow.wav?");
                     }
                     else if(gameObjects[i].line2Full.length != gameObjects[i].line2Current.length)
                     {
                         gameObjects[i].line2Current = gameObjects[i].line2Full.substring(0, gameObjects[i].line2Current.length + 1);
-                        playSound("./sounds/LOZ_text_slow.wav");
+                        playSound("./sounds/LOZ_Text_Slow.wav?");
                     }
                 }
                 
@@ -1935,47 +1935,47 @@
 
         function addHeart() {
             if (rupeeAmount >= 10 && rupeeAmount <= 20 && !addedHeart) {
-                playSound("./sounds/LOZ_get_heart.wav");
+                playSound("./sounds/LOZ_Get_Heart.wav?");
                 currentLinkHearts++;
                 addedHeart = true;
             } 
             if (rupeeAmount >= 21 && rupeeAmount <= 30 && !addedHeart1) {
-                playSound("./sounds/LOZ_get_heart.wav");
+                playSound("./sounds/LOZ_Get_Heart.wav?");
                 currentLinkHearts++;
                 addedHeart1 = true;
             } 
             if (rupeeAmount >= 31 && rupeeAmount <= 40 && !addedHeart2) {
-                playSound("./sounds/LOZ_get_heart.wav");
+                playSound("./sounds/LOZ_Get_Heart.wav?");
                 currentLinkHearts++;
                 addedHeart2 = true;
             } 
             if (rupeeAmount >= 41 && rupeeAmount <= 50 && !addedHeart3) {
-                playSound("./sounds/LOZ_get_heart.wav");
+                playSound("./sounds/LOZ_Get_Heart.wav?");
                 currentLinkHearts++;
                 addedHeart3 = true;
             } 
             if (rupeeAmount >= 51 && rupeeAmount <= 60 && !addedHeart4) {
-                playSound("./sounds/LOZ_get_heart.wav");
+                playSound("./sounds/LOZ_Get_Heart.wav?");
                 linkHearts++;
                 addedHeart4 = true;
             } 
             if (rupeeAmount >= 61 && rupeeAmount <= 70 && !addedHeart5) {
-                playSound("./sounds/LOZ_get_heart.wav");
+                playSound("./sounds/LOZ_Get_Heart.wav?");
                 currentLinkHearts++;
                 addedHeart5 = true;
             } 
             if (rupeeAmount >= 71 && rupeeAmount <= 80 && !addedHeart6) {
-                playSound("./sounds/LOZ_get_heart.wav");
+                playSound("./sounds/LOZ_Get_Heart.wav?");
                 currentLinkHearts++;
                 addedHeart6 = true;
             } 
             if (rupeeAmount >= 81 && rupeeAmount <= 90 && !addedHeart7) {
-                playSound("./sounds/LOZ_get_heart.wav");
+                playSound("./sounds/LOZ_Get_Heart.wav?");
                 currentLinkHearts++;
                 addedHeart7 = true;
             } 
             if (rupeeAmount >= 91 && rupeeAmount <= 100 && !addedHeart8) {
-                playSound("./sounds/LOZ_get_heart.wav");
+                playSound("./sounds/LOZ_Get_Heart.wav?");
                 currentLinkHearts++;
                 addedHeart8 = true;
             } 
@@ -2215,13 +2215,13 @@
                             gameObjects.push(gO);
                             if(gameObjects[j].health == 0)
                             {
-                                playSound("./sounds/LOZ_enemy_die.wav");
+                                playSound("./sounds/LOZ_Enemy_Die.wav?");
                                 gameObjects.splice(j, 1);
                                 
                             }
                             else
                             {
-                                playSound("./sounds/LOZ_enemy_hit.wav");
+                                playSound("./sounds/LOZ_Enemy_Hit.wav?");
                             }
                             projectiles.splice(i, 1);
                             break;
@@ -2236,8 +2236,8 @@
     {
         ctx.fillStyle = "rgb(255,255,255)";
         ctx.font = "20px Arial";
-        ctx.fillText("Push enter to start", 40, 120);
-        ctx.fillText("earn 50 rupees :|", 40, 140);
+        ctx.fillText("Press enter", 40, 120);
+        ctx.fillText("Get 50 Rupees", 40, 160);
     }
     
     function drawGameEnd()
@@ -2250,7 +2250,7 @@
         {       
             ctx.fillStyle = "rgb(255,0,0)";
             ctx.font = "20px Arial";
-            ctx.fillText("You ded :(", 40, 120);
+            ctx.fillText("u ded :(", 40, 120);
             
         }
         
@@ -2266,7 +2266,7 @@
         {       
             ctx.fillStyle = "rgb(255,255,0)";
             ctx.font = "20px Arial";
-            ctx.fillText("You did it :)", 40, 120);
+            ctx.fillText("yipeeee :)", 40, 120);
             backgroundMusic.pause();
             if(rupeeAmount >= 50)
             {
@@ -2292,25 +2292,25 @@
         {
             leftPressed = false;
             cursorX -= 22;
-            playSound("./sounds/LOZ_text.wav");
+            playSound("./sounds/LOZ_Text.wav?");
         }
         else if(rightPressed && cursorX < 196)
         {
             rightPressed = false;
             cursorX += 22;
-            playSound("./sounds/LOZ_text.wav");
+            playSound("./sounds/LOZ_Text.wav?");
         }
         else if(upPressed && cursorY + offset > 42)
         {
             upPressed = false;
             cursorY -= 18;
-            playSound("./sounds/LOZ_text.wav");
+            playSound("./sounds/LOZ_Text.wav");
         }
         else if(downPressed && cursorY + offset < 43)
         {
             downPressed = false;
             cursorY += 18;
-            playSound("./sounds/LOZ_text.wav");
+            playSound("./sounds/LOZ_Text.wav?");
         }
         ctx.drawImage(hud, 536, 137, 16, 16, 
                     cursorX, cursorY + offset, 16, 16);
